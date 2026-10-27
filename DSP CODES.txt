@@ -1,0 +1,411 @@
+DSP CODES
+1 Signal Plotting
+
+clc;
+% Sine Signal
+subplot(3, 2, 1);
+t = 0: 0.000001:pi;
+y = sin(2*pi*t);
+xlabel('Time');
+ylabel('Amplitude');
+plot(y);
+% cosine Signal
+subplot(3, 2, 2);
+t = 0: 0.000001:pi;
+y = cos(2*pi*t);
+xlabel('Time');
+ylabel('Amplitude');
+plot(y);
+% Exponential Signal
+subplot(3,2,3);
+t = -5:0.01:5;
+y = exp(t);
+plot(t,y);
+xlabel('Time');
+ylabel('Amplitude');
+title('Exponential Signal');
+% Impulse Signal
+subplot(3,2,4);
+t = -5:1:5;
+y = zeros(size(t));
+y(t==0) = 1;
+stem(t,y);
+xlabel('Time');
+ylabel('Amplitude');
+title('Impulse Signal');
+% Unit Step Signal
+subplot(3,2,5);
+t = -5:1:5;
+y = (t>=0);
+stem(t,y);
+xlabel('Time');
+ylabel('Amplitude');
+title('Unit Step Signal');
+%ramp signal
+subplot(3, 2, 6);
+t = -5:1:5;
+y = t.*(t>=0);
+stem(t,y);
+xlabel('Time');
+ylabel('Amplitude');
+title('Ramp Signal');
+
+
+2 DFT and IDFT
+
+clc;
+x=[1,2, 0, 0];
+h=[2,2,0,0];
+N = length(x);
+X=fft(x);
+H=fft(h);
+Y=H.*X;
+y=ifft(Y);
+t=0:1:N-1;
+clc;
+subplot(3,2,1);
+stem(t, x, 'filled', 'LineWidth'
+,
+1.5);
+title('Input Signal');
+subplot(3,2,2);
+stem(t, h, 'filled',
+'LineWidth', 1.5);
+title('h(n) Signal');
+subplot(3,2,3);
+stem(t, abs(X), 'filled',
+'LineWidth', 1.5);
+title('X Signal');
+subplot(3,2,4);
+stem(t, abs(H), 'filled',
+'LineWidth', 1.5);
+title('H Signal');
+subplot(3,2,5);
+stem(t, abs(Y), 'filled',
+'LineWidth', 1.5);
+title('Y Signal');
+subplot(3,2,6);
+stem(t, real(y), 'filled',
+'LineWidth', 1.5);
+title('y signal IDFT Signal');
+
+
+3 Circular Convolution
+
+clc;
+clear;
+x=[1,2,0,1];
+h=[2,2,1,1];
+N=length(x);
+y1= cconv(x,h,N);
+subplot(3,2,1);
+stem(x, 'filled', 'LineWidth', 1.5);
+title('x Signal');
+subplot(3,2,2);
+stem(h, 'filled', 'LineWidth', 1.5);
+title('h Signal');
+subplot(3,2,3);
+stem(y1, 'filled', 'LineWidth', 1.5);
+title('Convolved Signal');
+%Expansion
+X=fft(x);
+H=fft(h);
+Y=X.*H;
+y2 = ifft(Y);
+clc;
+subplot(3,2,4);
+stem(y2, 'filled', 'LineWidth', 1.5);
+title('Convolved Signal 2');
+
+
+4 Moving Average Filter
+
+clc;
+clear;
+close all;
+r = 64;
+d = rand(1,r)-0.5;
+k = 1:r;
+s = 2*k.*(0.9.^k);
+n = length(s);
+x = s+d;
+M=input('Enter a Number: ');
+h=ones(1,M)/M;
+y=fftfilt(h,x,n);
+plot(s,'r-'
+,'LineWidth', 1);
+hold on;
+plot(x,'b-.
+'
+,'LineWidth', 1);
+plot(y,
+'g--'
+,'LineWidth', 1);
+legend('Original Signal'
+,'Noisy Signal'
+,'Filtered Signal');
+title('Moving Average Filter');
+xlabel('Sample Index');
+ylabel('Amplitude');
+grid on;
+
+
+5 Median Filter
+
+clear all;
+close all;
+clc;
+r = 64;
+d = rand(1,r)-0.4;
+dr = round(d);
+k = 0:1:r-1;
+s = 2*k.*(0.9.^k);
+x = s + dr;
+M = input('Enter an odd window size (e.g., 3 or 5): ');
+y = medfilt1(x, M);
+plot(k, s, 'r-', 'LineWidth', 1);
+hold on;
+plot(k, x, 'b-', 'LineWidth', 1);
+plot(k, y, 'g-', 'LineWidth', 1);
+legend('Original Signal', 'Noisy Signal', 'Median Filtered Signal');
+title('Noise Removal Using Moving Median Filter');
+xlabel('Sample Index');
+ylabel('Amplitude');
+
+
+6 Low pass and High pass filter
+
+clc;
+clear all;
+close all;
+b = [6.762, -13.524, 6.762];
+zi = [0 0];
+n = 0:99;
+x1 = cos(0.1*n);
+x2 = cos(0.4*n);
+y = filter(b, 1, x1+x2, zi);
+plot(n, x1, 'r');
+hold on;
+plot(n, x2, 'b');
+plot(n, x1+x2, 'm');
+plot(n, y, 'g');
+legend('x1 - Low Frequency', ...
+'x2 - High Frequency', ...
+'Combined Input'
+, ...
+'Filtered Output');
+xlabel('Sample Index (n)');
+ylabel('Amplitude');
+title('FIR Low-Pass Filter');
+grid on;
+
+
+clc;
+clear all;
+close all;
+b = [-6.762, 13.456, -6.762];
+zi = [0 0];
+n = 0:99;
+x1 = cos(0.1*n);
+x2 = cos(0.4*n);
+y = filter(b, 1, x1+x2, zi);
+plot(n, x1, 'r');
+hold on;
+plot(n, x2, 'b');
+plot (n, x1+x2, 'm');
+plot(n, y, 'g');
+legend('x1 - Low Frequency', ...
+'x2 - High Frequency', ...
+'Combined Input'
+, ...
+'Filtered Output');
+xlabel('Sample Index (n)');
+ylabel('Amplitude');
+title('FIR High-Pass Filter');
+grid on;
+
+
+7 Gibbs Low pass filter
+
+% Gibbs Phenomenon - Low
+Pass Filter
+clear all;
+close all;
+clc;
+wc = 0.5*pi;
+N = 95;
+alpha = (N-1)/2;
+eps = 0.001;
+n = 0:1:N-1;
+%Ideal low pass filter
+hd1 = sin(wc*(n-alpha+eps));
+hd2 = pi*(n-alpha+eps);
+hd = (hd1)./(hd2);
+%Filter coefficient (Rectangular
+Window)
+hn = hd;
+% Frequency response
+w = 0:0.01:pi;
+h = freqz(hn,1,w);
+plot(w/pi, abs(h));
+xlabel('Normalized Frequency
+(\times\pi rad/smaple)');
+ylabel('Magnitude');
+title('Gibs Phenomenon in Low
+Pass Filter');
+
+
+8 Gibbs High pass filter
+
+% Gibbs Phenomenon - High
+Pass Filter
+clear all;
+close all;
+clc;
+wc = 0.5*pi;
+N = 95;
+alpha = (N-1)/2;
+eps = 0.001;
+n = 0:1:N-1;
+%Ideal high pass filter
+hd1 = sin(pi*(n-alpha+eps)) -
+sin(wc*(n-alpha+eps));
+hd2 = pi*(n-alpha+eps);
+hd = hd1./hd2;
+%Filter coefficient
+hn = hd;
+% Frequency response
+w = 0:0.01:pi;
+h = freqz(hn,1,w);
+plot(w/pi, abs(h));
+xlabel('Normalized Frequency
+(\times\pi rad/sample)');
+ylabel('Magnitude');
+title('Gibbs Phenomenon in High
+Pass Filter');
+grid on;
+
+
+9 Windowing Technique
+
+clc;
+wc = 0.5*pi;
+N = 55;
+alpha = (N-1)/2;
+eps = 0.001;
+n = 0:1:N-1;
+hd1 = sin(wc * (n - alpha + eps));
+hd2 = pi*(n - alpha + eps);
+hd = (hd1)./(hd2);
+wr = boxcar(N);
+hn = hd.*wr';
+w = 0:0.01:pi;
+h = freqz(hn, 1, w);
+plot(w/pi, abs(h));
+hold on;
+wh = hamming(N);
+hn = hd.*wh';
+w = 0:0.01:pi;
+h = freqz(hn,1,w);
+plot(w/pi, abs(h), 'r.');
+hold on;
+wb = blackman(N);
+hn = hd.*wb';
+w = 0:0.01:pi;
+h = freqz(hn,1,w);
+plot(w/pi, abs(h), 'g-.');
+hold on;
+legend('Boxcar Window','Hamming Window', 'BlackmanWindow');
+xlabel('Normalized Frequency');
+ylabel('Magnitude')
+hold on;
+
+
+10 Kaiser Window
+
+clc;
+% Given specifications
+ap = 0.1;
+as = 44;
+ws = 30;
+wp = 20;
+wfs = 100;
+% Calculations
+B = ws - wp;
+wc = 0.5*(wp + ws);
+wcr = wc*2*pi/wfs;
+D = (as - 7.95)/14.36;
+N = ceil((wfs*D/B) + 1);
+alpha = (N-1)/2;
+gamma = 0.584*(as-21)^0.4 +
+0.07886*(as-21);
+% Ideal low-pass filter
+n = 0:1:N-1;
+a1 = sin(wcr*(n-alpha));
+a2 = pi*(n-alpha);
+hd = a1./a2;
+hd(alpha+1) = 0.5;
+% Kaiser window
+wk = kaiser(N,gamma);
+% Windowed filter coefficients
+hn = hd.*wk;
+% Frequency response
+w = 0:1:pi;
+h = freqz(hn,1,w);
+% Plot magnitude response in dB
+plot(w/pi,20*log10(abs(h)));
+xlabel('Normalized Frequency(\times\pi rad/sample)');
+ylabel('Magnitude (dB)');
+title('Kaiser Window Low-Pass FIR Filter');
+grid on;
+
+
+11 UP sampling
+
+% Illustration of Upsampling
+clear;
+close all;
+clc;
+N = 10;
+n = 0:1:N-1;
+x = sin(2*pi*n/10) + sin(2*pi*n/5);
+L = 3; % Upsampling factor
+x1 = zeros(1,L*N);
+n1 = 1:1:L*N;
+j = 1:L:L*N;
+x1(j) = x;
+subplot(2,1,1);
+stem(n,x);
+xlabel('n');
+ylabel('x');
+title('Input Sequence');
+subplot(2,1,2);
+stem(n1,x1);
+xlabel('n');
+ylabel('x1');
+title('Upsampled Sequence');
+
+
+12 Down sampling
+
+% Illustration of Downsampling
+clc;
+N = 30; % Length of input
+sequence
+n = 0:1:N-1;
+x = sin(2*pi*n/20) +
+sin(2*pi*n/15);
+M = 3; % Downsampling factor
+x1 = x(1:M:N); % Keep every M-th
+sample
+n1 = 1:1:N/M;
+subplot(2,1,1);
+stem(n,x);
+xlabel('n');
+ylabel('x');
+title('Input Sequence');
+subplot(2,1,2);
+stem(n1-1,x1);
+xlabel('n');
+ylabel('x1');
+title('Downsampled Sequence');
